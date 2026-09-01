@@ -1,0 +1,328 @@
+/* =========================================================================
+   SIM-CD · Hoja de estilos
+   ========================================================================= */
+:root {
+  --bg: #070b14;
+  --panel: #0f172a;
+  --panel-2: #131c31;
+  --borde: #1e293b;
+  --texto: #e2e8f0;
+  --suave: #94a3b8;
+  --tenue: #64748b;
+  --acento: #38bdf8;
+  --planta: #a78bfa;
+  --cliente: #34d399;
+  --ok: #4ade80;
+  --warn: #fbbf24;
+  --bad: #f87171;
+  --radio: 12px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--texto);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+}
+
+/* ---------------- Barra superior ---------------- */
+.barra {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap;
+  padding: 12px 20px;
+  background: linear-gradient(180deg, #0f172a, #0b1220);
+  border-bottom: 1px solid var(--borde);
+  position: sticky; top: 0; z-index: 20;
+}
+.marca { display: flex; align-items: center; gap: 12px; }
+.marca .logo {
+  font-size: 26px; color: var(--acento);
+  filter: drop-shadow(0 0 10px rgba(56,189,248,.6));
+}
+.marca h1 { margin: 0; font-size: 19px; letter-spacing: .5px; }
+.marca p { margin: 2px 0 0; font-size: 11.5px; color: var(--suave); }
+
+.controles { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+.btn {
+  background: var(--panel-2);
+  color: var(--texto);
+  border: 1px solid var(--borde);
+  border-radius: 9px;
+  padding: 8px 13px;
+  font-size: 13px; font-weight: 500;
+  cursor: pointer;
+  transition: .15s;
+}
+.btn:hover { background: #1c2942; border-color: #334155; }
+.btn.primario { background: var(--acento); color: #06121d; border-color: var(--acento); font-weight: 700; }
+.btn.primario:hover { background: #7dd3fc; }
+.btn.primario.activo { background: var(--warn); border-color: var(--warn); }
+.btn.ancho { width: 100%; margin-top: 10px; }
+
+select {
+  background: var(--panel-2); color: var(--texto);
+  border: 1px solid var(--borde); border-radius: 9px;
+  padding: 8px 10px; font-size: 13px; cursor: pointer;
+}
+
+.vel { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--suave); }
+.vel input { width: 110px; }
+.vel b { color: var(--acento); min-width: 40px; display: inline-block; }
+
+/* ---------------- Barra de progreso ---------------- */
+.progreso-wrap {
+  position: relative; height: 22px;
+  background: #0b1220; border-bottom: 1px solid var(--borde);
+  display: flex; align-items: center;
+}
+.progreso {
+  position: absolute; left: 0; top: 0; bottom: 0; width: 0%;
+  background: linear-gradient(90deg, rgba(56,189,248,.35), rgba(52,211,153,.35));
+  transition: width .2s linear;
+}
+.progreso-wrap span {
+  position: relative; margin-left: 20px;
+  font-size: 11px; color: var(--suave); letter-spacing: .4px;
+}
+
+/* ---------------- Layout general ---------------- */
+.layout {
+  display: grid;
+  grid-template-columns: 310px minmax(420px, 1fr) 350px;
+  gap: 14px;
+  padding: 14px;
+  align-items: start;
+}
+@media (max-width: 1250px) { .layout { grid-template-columns: 290px 1fr; } .derecha { grid-column: 1 / -1; } }
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+  .derecha { grid-column: auto; }
+}
+
+.col { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+/* Las columnas tienen max-height y scroll propio. Sin esto, flexbox encoge a
+   los hijos para que quepan, y el que tiene overflow (la bitácora) se lleva
+   todo el encogimiento y colapsa a cero: el scroll debe ser de la columna. */
+.col > * { flex: 0 0 auto; }
+.izquierda, .derecha { max-height: calc(100vh - 110px); overflow-y: auto; padding-right: 4px; }
+.izquierda::-webkit-scrollbar, .derecha::-webkit-scrollbar { width: 8px; }
+.izquierda::-webkit-scrollbar-thumb, .derecha::-webkit-scrollbar-thumb {
+  background: #1e293b; border-radius: 8px;
+}
+
+.titulo-col {
+  font-size: 11px; text-transform: uppercase; letter-spacing: 1.3px;
+  color: var(--tenue); margin: 4px 0 0; font-weight: 700;
+}
+
+.tarjeta {
+  background: var(--panel);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  padding: 12px;
+}
+.tarjeta h3 {
+  margin: 0 0 8px; font-size: 12.5px; font-weight: 600; color: var(--texto);
+}
+.tarjeta h3 small { color: var(--tenue); font-weight: 400; margin-left: 6px; font-size: 11px; }
+
+/* ---------------- Panel de parámetros ---------------- */
+.grupo {
+  background: var(--panel);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  padding: 4px 12px 8px;
+  margin-bottom: 10px;
+}
+.grupo > summary {
+  cursor: pointer; list-style: none;
+  padding: 9px 2px; font-size: 12.5px; font-weight: 700;
+  color: var(--acento); letter-spacing: .3px;
+}
+.grupo > summary::marker { display: none; }
+.grupo > summary::before { content: '▸ '; color: var(--tenue); }
+.grupo[open] > summary::before { content: '▾ '; }
+
+.campo { margin: 10px 0 14px; }
+.campo label {
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-size: 12px; color: var(--suave); margin-bottom: 5px; gap: 8px;
+}
+.campo label b { color: var(--texto); font-size: 12px; font-weight: 600; white-space: nowrap; }
+.campo .ayuda { margin: 5px 0 0; font-size: 10.8px; color: var(--tenue); line-height: 1.4; }
+
+.slider { -webkit-appearance: none; appearance: none; width: 100%; height: 4px;
+  background: #1e293b; border-radius: 4px; outline: none; }
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 15px; height: 15px; border-radius: 50%;
+  background: var(--acento); cursor: pointer;
+  border: 2px solid #0b1220; box-shadow: 0 0 8px rgba(56,189,248,.55);
+}
+.slider::-moz-range-thumb {
+  width: 15px; height: 15px; border-radius: 50%; background: var(--acento);
+  cursor: pointer; border: 2px solid #0b1220;
+}
+.campo-num, .campo select {
+  width: 100%; background: var(--panel-2); color: var(--texto);
+  border: 1px solid var(--borde); border-radius: 8px; padding: 7px 9px; font-size: 12.5px;
+}
+
+/* ---------------- Lienzo de animación ---------------- */
+.lienzo-wrap { padding: 0; overflow: hidden; }
+#lienzo { display: block; width: 100%; height: 460px; }
+.leyenda {
+  display: flex; flex-wrap: wrap; gap: 14px;
+  padding: 9px 14px; border-top: 1px solid var(--borde);
+  font-size: 11px; color: var(--suave); background: #0b1220;
+}
+.leyenda i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; }
+
+/* ---------------- Gráficos ---------------- */
+.graficos { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 780px) { .graficos { grid-template-columns: 1fr; } }
+.chart { display: block; width: 100%; height: 168px; }
+.chart-bajo { height: 104px; }
+.ancho2 { grid-column: 1 / -1; }
+
+.nota {
+  margin: 8px 0 0; font-size: 11px; line-height: 1.5; color: var(--tenue);
+}
+.nota b { color: var(--suave); }
+.nota.aviso {
+  background: rgba(251,191,36,.08); border-left: 3px solid var(--warn);
+  border-radius: 6px; padding: 7px 9px; margin-bottom: 10px; color: var(--suave);
+}
+
+/* Campo desactivado porque el motor lo calcula solo */
+.campo.bloqueado { opacity: .38; }
+.campo.bloqueado input, .campo.bloqueado select { pointer-events: none; }
+
+/* ---------------- KPIs ---------------- */
+.kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.kpi {
+  background: var(--panel); border: 1px solid var(--borde);
+  border-radius: 10px; padding: 9px 10px;
+  display: flex; flex-direction: column; gap: 2px;
+}
+.kpi > span { font-size: 10.5px; color: var(--suave); line-height: 1.25; }
+.kpi > em { font-size: 9.5px; color: var(--tenue); font-style: normal; }
+.kpi-valor { font-size: 17px; font-weight: 700; letter-spacing: -.3px; }
+.kpi-valor.ok { color: var(--ok); }
+.kpi-valor.warn { color: var(--warn); }
+.kpi-valor.bad { color: var(--bad); }
+.kpi-valor.neutro { color: var(--acento); }
+
+/* ---------------- Panel teórico ---------------- */
+.ns { display: flex; flex-direction: column; gap: 6px; font-size: 12px;
+  color: var(--suave); margin-bottom: 10px; }
+.ns b { color: var(--acento); }
+
+.tabla { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+.tabla td { padding: 5px 4px; border-bottom: 1px solid rgba(30,41,59,.7); vertical-align: top; }
+.tabla td:first-child { color: var(--suave); }
+.tabla td.num { color: var(--texto); font-weight: 700; text-align: right; white-space: nowrap; }
+.tabla td.form { color: var(--tenue); font-size: 10px; font-style: italic; text-align: right; }
+
+/* ---------------- Comparador A / B ---------------- */
+.cabecera-ab { line-height: 1.6; margin-bottom: 10px; }
+.cabecera-ab b { color: var(--acento); }
+.cabecera-ab .dia { color: var(--tenue); }
+
+.tabla.comp td { padding: 4px 3px; font-size: 11px; }
+.tabla.comp tr.cab td {
+  color: var(--tenue); font-size: 9.5px; text-transform: uppercase;
+  letter-spacing: .6px; border-bottom: 1px solid var(--borde); font-weight: 700;
+}
+.tabla.comp td.mejor { color: var(--ok); font-weight: 700; }
+.tabla.comp td.peor  { color: var(--bad); font-weight: 700; }
+.tabla.comp td.igual { color: var(--tenue); }
+
+.difs { list-style: none; padding: 0; margin: 4px 0 0; font-size: 10.8px; }
+.difs li {
+  padding: 4px 8px; margin-bottom: 4px; border-radius: 6px;
+  background: var(--panel-2); border-left: 2px solid var(--acento);
+  color: var(--suave); line-height: 1.45;
+}
+.difs li b { color: var(--texto); }
+
+.fila-botones { display: flex; gap: 8px; margin-top: 10px; }
+.fila-botones .btn { flex: 1; font-size: 12px; padding: 7px 8px; }
+
+.comparacion { list-style: none; padding: 0; margin: 10px 0 0; font-size: 11.5px; }
+.comparacion li {
+  padding: 6px 9px; margin-bottom: 5px; border-radius: 7px;
+  border-left: 3px solid var(--tenue); background: var(--panel-2); line-height: 1.4;
+}
+.comparacion li.bien { border-left-color: var(--ok); }
+.comparacion li.medio { border-left-color: var(--warn); }
+.comparacion li.mal { border-left-color: var(--bad); }
+
+/* ---------------- Bitácora ---------------- */
+.bitacora {
+  background: var(--panel); border: 1px solid var(--borde);
+  border-radius: var(--radio); padding: 8px;
+  max-height: 210px; overflow-y: auto;
+  font-size: 11px; line-height: 1.5;
+}
+.evento { padding: 3px 4px; border-bottom: 1px solid rgba(30,41,59,.6); color: var(--suave); }
+.evento span { color: var(--tenue); margin-right: 7px; font-variant-numeric: tabular-nums; }
+.evento.ok { color: var(--ok); }
+.evento.warn { color: var(--warn); }
+.evento.bad { color: var(--bad); }
+
+/* ---------------- Pie ---------------- */
+.pie {
+  padding: 12px 20px 22px; text-align: center;
+  font-size: 11px; color: var(--tenue);
+}
+kbd {
+  background: var(--panel-2); border: 1px solid var(--borde);
+  border-radius: 5px; padding: 1px 6px; font-size: 10.5px; color: var(--texto);
+}
+
+/* ---------------- Ajustes para pantallas angostas ----------------
+   Van al final del archivo a propósito: comparten especificidad con las
+   reglas base, así que solo ganan si aparecen después. */
+@media (max-width: 900px) {
+  /* En una sola columna la página ya scrollea; un scroll anidado dentro de
+     cada panel es incómodo, sobre todo en pantallas táctiles. */
+  .izquierda, .derecha { max-height: none; overflow-y: visible; padding-right: 0; }
+  /* El mapa necesita un ancho mínimo para que los nodos no se solapen:
+     se le da scroll horizontal propio en vez de dejar que se comprima. */
+  .lienzo-wrap { overflow-x: auto; }
+  #lienzo { height: 380px; min-width: 560px; }
+  .graficos { grid-template-columns: 1fr; }
+  .kpis { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 520px) {
+  #lienzo { height: 330px; }
+  /* Con los controles en varias filas, la barra fija se comía un cuarto de la
+     pantalla: en móvil se deja desplazar con el resto de la página. */
+  .barra { position: static; padding: 10px 12px; }
+  .layout { padding: 10px; gap: 10px; }
+  .controles { width: 100%; }
+  .controles .btn { flex: 1 1 auto; }
+  .vel { width: 100%; }
+  .vel input { flex: 1; width: auto; }
+  .tabla.comp td { font-size: 10.5px; padding: 4px 2px; }
+}
+.credito {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 10px;
+  margin-top: 4px; padding: 14px 12px 4px;
+  border-top: 1px solid var(--borde);
+}
+.credito-logo {
+  flex: none; max-width: 100%; max-height: none;
+  width: auto; height: auto; object-fit: contain;
+  opacity: .82;
+}
+.credito-texto { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.credito-texto b { font-size: 12.5px; font-weight: 600; color: var(--texto); line-height: 1.3; }
+.credito-texto span { font-size: 10.5px; color: var(--tenue); line-height: 1.4; }

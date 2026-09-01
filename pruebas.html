@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIM-CD · Pruebas del motor</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .pagina-pruebas { max-width: 1000px; margin: 0 auto; padding: 24px 20px 60px; }
+    .encabezado { display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
+    .encabezado h1 { margin: 0; font-size: 20px; }
+    .encabezado p { margin: 4px 0 0; font-size: 12px; color: var(--suave); }
+    .resumen { padding: 10px 18px; border-radius: 10px; font-size: 14px;
+      border: 1px solid var(--borde); }
+    .resumen.todo-bien { background: rgba(74,222,128,.10); border-color: var(--ok); color: var(--ok); }
+    .resumen.hay-fallas { background: rgba(248,113,113,.10); border-color: var(--bad); color: var(--bad); }
+    .grupo-titulo { font-size: 11px; text-transform: uppercase; letter-spacing: 1.3px;
+      color: var(--tenue); margin: 22px 0 8px; font-weight: 700; }
+    .prueba { display: flex; align-items: flex-start; gap: 12px;
+      background: var(--panel); border: 1px solid var(--borde);
+      border-left-width: 3px; border-radius: 9px; padding: 10px 12px; margin-bottom: 6px; }
+    .prueba.pasa { border-left-color: var(--ok); }
+    .prueba.falla { border-left-color: var(--bad); background: rgba(248,113,113,.06); }
+    .prueba .marca { font-weight: 700; font-size: 14px; width: 14px; flex: none; }
+    .prueba.pasa .marca { color: var(--ok); }
+    .prueba.falla .marca { color: var(--bad); }
+    .prueba .cuerpo { flex: 1; min-width: 0; }
+    .prueba .cuerpo b { font-size: 13px; font-weight: 600; display: block; }
+    .prueba .detalle { display: block; margin-top: 3px; font-size: 11px;
+      color: var(--suave); line-height: 1.5; word-break: break-word; }
+    .prueba .ms { font-size: 10.5px; color: var(--tenue); flex: none;
+      font-variant-numeric: tabular-nums; padding-top: 2px; }
+    .volver { color: var(--acento); text-decoration: none; font-size: 12.5px; }
+  </style>
+</head>
+<body>
+  <div class="pagina-pruebas">
+    <div class="encabezado">
+      <div>
+        <h1>Pruebas del motor de simulación</h1>
+        <p>Invariantes, determinismo, propiedades del modelo, coherencia con la teoría
+           y casos borde. &nbsp;<a class="volver" href="index.html">← volver al simulador</a></p>
+      </div>
+      <div id="resumen" class="resumen">ejecutando…</div>
+    </div>
+    <div id="resultados"></div>
+  </div>
+
+  <script src="js/sim.js"></script>
+  <script src="js/view.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/pruebas.js"></script>
+</body>
+</html>

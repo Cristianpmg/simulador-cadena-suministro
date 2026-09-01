@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador Cadena de Suministro</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<header class="barra">
+  <div class="marca">
+    <span class="logo">◈</span>
+    <div>
+      <h1>INGENIERÍA CIVIL INDUSTRIAL - SIMULACIÓN CENTROS DE DISTRIBUCIÓN</h1>
+      <p>Planta → Centro de Distribución → Clientes</p>
+    </div>
+  </div>
+
+  <div class="controles">
+    <select id="escenarios" title="Escenarios predefinidos"></select>
+    <button id="btn-play" class="btn primario">▶&nbsp; Simular</button>
+    <button id="btn-paso" class="btn" title="Avanzar un día">⏭&nbsp; 1 día</button>
+    <button id="btn-fin" class="btn" title="Correr hasta el final">⏩&nbsp; Al final</button>
+    <button id="btn-reset" class="btn">↺&nbsp; Reiniciar</button>
+    <label class="vel">
+      Velocidad <b id="val-velocidad">1.0×</b>
+      <input type="range" id="velocidad" min="0.2" max="20" step="0.2" value="1" class="slider">
+    </label>
+  </div>
+</header>
+
+<div class="progreso-wrap">
+  <div id="progreso" class="progreso"></div>
+  <span id="etiqueta-dia">Día 0</span>
+</div>
+
+<main class="layout">
+
+  <!-- ================= PANEL IZQUIERDO: PARÁMETROS ================= -->
+  <aside class="col izquierda">
+    <h2 class="titulo-col">Parámetros de entrada</h2>
+    <div id="panel-parametros"></div>
+    <div class="credito">
+  <img class="credito-logo" src="FINARQ_LOGO_BLANCO TRANSPARENTE.png" alt=""
+       onerror="this.style.display='none'">
+  <div class="credito-texto">
+    <b>Cristian Monsalve</b>
+    <span>Facultad de Ingeniería y Arquitectura</span>
+    <span>Universidad Central de Chile</span>
+  </div>
+</div>
+  </aside>
+
+  <!-- ================= CENTRO: ANIMACIÓN + GRÁFICOS ================= -->
+  <section class="col centro">
+    <div class="tarjeta lienzo-wrap">
+      <canvas id="lienzo"></canvas>
+      <div class="leyenda">
+        <span><i style="background:#a78bfa"></i>Planta</span>
+        <span><i style="background:#38bdf8"></i>Centro de distribución</span>
+        <span><i style="background:#34d399"></i>Zonas de cliente</span>
+        <span><i style="background:#c4b5fd"></i>Camión reposición</span>
+        <span><i style="background:#6ee7b7"></i>Camión reparto</span>
+      </div>
+    </div>
+
+    <div class="graficos">
+      <div class="tarjeta">
+        <h3>Inventario en el CD <small>diente de sierra</small></h3>
+        <canvas id="g-inventario" class="chart"></canvas>
+      </div>
+      <div class="tarjeta">
+        <h3>Demanda, previsión y órdenes <small>franjas = promoción</small></h3>
+        <canvas id="g-demanda" class="chart"></canvas>
+      </div>
+      <div class="tarjeta">
+        <h3>Nivel de servicio acumulado</h3>
+        <canvas id="g-servicio" class="chart"></canvas>
+      </div>
+      <div class="tarjeta">
+        <h3>Composición del costo total</h3>
+        <canvas id="g-costos" class="chart"></canvas>
+      </div>
+      <div class="tarjeta ancho2">
+        <h3>Amplificación por etapa <small>coeficiente de variación semanal a lo largo de la cadena</small></h3>
+        <canvas id="g-latigo" class="chart chart-bajo"></canvas>
+        <p class="nota">Si las barras crecen de arriba hacia abajo, la cadena está
+        amplificando: la planta ve una demanda mucho más errática que la del cliente final.
+        Eso es el <b>efecto látigo</b>, y se paga en inventario, horas extra y quiebres.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PANEL DERECHO: KPI + TEORÍA ================= -->
+  <aside class="col derecha">
+    <h2 class="titulo-col">Indicadores de desempeño</h2>
+
+    <div class="kpis">
+      <div class="kpi"><span>Fill rate (tipo 2)</span><b id="k-fill" class="kpi-valor">—</b>
+        <em>demanda con stock al llegar</em></div>
+      <div class="kpi"><span>Nivel de servicio de ciclo</span><b id="k-ciclo" class="kpi-valor">—</b>
+        <em>días sin quiebre de stock</em></div>
+      <div class="kpi"><span>Espera media del pedido</span><b id="k-espera" class="kpi-valor">—</b>
+        <em>ley de Little: W = L / λ</em></div>
+      <div class="kpi"><span>Unidades no servidas</span><b id="k-pend" class="kpi-valor">—</b>
+        <em>pendientes + perdidas</em></div>
+      <div class="kpi"><span>Inventario promedio CD</span><b id="k-inv" class="kpi-valor">—</b>
+        <em>unidades</em></div>
+      <div class="kpi"><span>Días de cobertura</span><b id="k-cob" class="kpi-valor">—</b>
+        <em>inv. promedio / demanda diaria</em></div>
+      <div class="kpi"><span>Rotación anualizada</span><b id="k-rot" class="kpi-valor">—</b>
+        <em>veces al año</em></div>
+      <div class="kpi"><span>Costo total acumulado</span><b id="k-costo" class="kpi-valor">—</b>
+        <em>todos los conceptos</em></div>
+      <div class="kpi"><span>Costo por unidad entregada</span><b id="k-cu" class="kpi-valor">—</b>
+        <em>$ / unidad</em></div>
+      <div class="kpi"><span>Margen acumulado</span><b id="k-margen" class="kpi-valor">—</b>
+        <em>ingresos − costos</em></div>
+      <div class="kpi"><span>Uso flota de reparto</span><b id="k-flota" class="kpi-valor">—</b>
+        <em>CD → clientes</em></div>
+      <div class="kpi"><span>Uso flota de reposición</span><b id="k-repo" class="kpi-valor">—</b>
+        <em>planta → CD</em></div>
+      <div class="kpi"><span>Utilización de la planta</span><b id="k-planta" class="kpi-valor">—</b>
+        <em>producción / capacidad</em></div>
+      <div class="kpi"><span>Látigo en el CD</span><b id="k-bullwhip" class="kpi-valor">—</b>
+        <em>CV órdenes / CV demanda</em></div>
+      <div class="kpi"><span>Látigo en la planta</span><b id="k-bwplanta" class="kpi-valor">—</b>
+        <em>CV producción / CV demanda</em></div>
+      <div class="kpi"><span>Error de previsión</span><b id="k-mape" class="kpi-valor">—</b>
+        <em>MAPE del pronóstico del CD</em></div>
+      <div class="kpi"><span>s efectivo hoy</span><b id="k-sdin" class="kpi-valor">—</b>
+        <em>punto de reorden en uso</em></div>
+    </div>
+
+    <h2 class="titulo-col">Comparación A / B</h2>
+    <div class="tarjeta comparador">
+      <div id="comp-vacio">
+        <p class="nota">Congela la corrida actual como referencia <b>A</b>. Después cambia
+        lo que quieras y vuelve a simular: los gráficos superpondrán A en gris punteado y
+        la tabla mostrará la diferencia indicador por indicador.
+        <b>Deja la misma semilla</b> para que la comparación sea justa.</p>
+        <button id="btn-fijar" class="btn ancho">📌&nbsp; Fijar corrida actual como A</button>
+      </div>
+
+      <div id="comp-lleno" style="display:none">
+        <p id="comp-encabezado" class="nota cabecera-ab"></p>
+        <p id="comp-aviso" class="nota aviso" style="display:none"></p>
+        <table id="tabla-comparacion" class="tabla comp"></table>
+        <div id="comp-diff"></div>
+        <div class="fila-botones">
+          <button id="btn-refijar" class="btn">↻&nbsp; Actualizar A</button>
+          <button id="btn-quitar" class="btn">✕&nbsp; Quitar A</button>
+        </div>
+        <button id="btn-csv-comp" class="btn ancho">⤓&nbsp; Descargar comparación (CSV)</button>
+      </div>
+    </div>
+
+    <h2 class="titulo-col">Modelo matemático de referencia</h2>
+    <div class="tarjeta teoria">
+      <label class="ns">
+        Servicio de ciclo objetivo (tipo 1) <b id="val-nivel-servicio">95%</b>
+        <input type="range" id="nivel-servicio" min="50" max="99.9" step="0.5" value="95" class="slider">
+      </label>
+      <p id="nota-ns" class="nota"></p>
+      <p id="aviso-dinamica" class="nota aviso" style="display:none">
+        La previsión está activa: el CD recalcula <b>s</b>, <b>Q</b> y <b>S</b> cada día
+        con lo que observa, así que esos tres controles quedan bloqueados.
+      </p>
+      <table id="tabla-teoria" class="tabla"></table>
+      <button id="btn-optimo" class="btn ancho">⚙&nbsp; Aplicar valores óptimos al simulador</button>
+      <ul id="lista-comparacion" class="comparacion"></ul>
+    </div>
+
+    <h2 class="titulo-col">Bitácora de eventos</h2>
+    <div id="bitacora" class="bitacora"></div>
+
+    <button id="btn-csv" class="btn ancho">⤓&nbsp; Descargar datos (CSV)</button>
+  </aside>
+</main>
+
+<footer class="pie">
+  <span>Atajo: <kbd>Espacio</kbd> inicia/pausa · Cambiar semilla genera otra realización de la demanda ·
+  Misma semilla + distinta política = comparación justa.</span>
+</footer>
+
+<script src="js/sim.js"></script>
+<script src="js/view.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
